@@ -1,8 +1,6 @@
 version: "3.7"
 services:
 
-## --------------------------- ORION --------------------------- ##
-
   traefik:
     image: traefik:v3.4.0
     command:
@@ -10,7 +8,7 @@ services:
       - "--providers.swarm=true"
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=TriskelNET" ## Nome da rede interna
+      - "--providers.docker.network=${NETWORK}" 
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -20,7 +18,7 @@ services:
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=triskeldes@gmail.com" ## Email para receber as notificações
+      - "--certificatesresolvers.letsencryptresolver.acme.email=${EMAIL}" 
       - "--log.level=DEBUG"
       - "--log.format=common"
       - "--log.filePath=/var/log/traefik/traefik.log"
@@ -32,7 +30,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
     networks:
-      - TriskelNET ## Nome da rede interna
+      - ${NETWORK} 
 
     ports:
       - target: 80
@@ -55,7 +53,6 @@ services:
         - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
         - "traefik.http.routers.http-catchall.priority=1"
 
-## --------------------------- ORION --------------------------- ##
 
 volumes:
   vol_shared:
@@ -66,7 +63,7 @@ volumes:
     name: volume_swarm_certificates
 
 networks:
-  TriskelNET: ## Nome da rede interna
+  ${NETWORK}: 
     external: true
     attachable: true
-    name: TriskelNET ## Nome da rede interna
+    name: ${NETWORK} 
