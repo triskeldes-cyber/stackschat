@@ -1,14 +1,13 @@
 version: "3.7"
 services:
-
   traefik:
     image: traefik:v3.4.0
     command:
       - "--api.dashboard=true"
       - "--providers.swarm=true"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=${NETWORK}" 
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.exposedbydefault=false"
+      - "--providers.swarm.network=${NETWORK}"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -18,20 +17,17 @@ services:
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=${EMAIL}" 
+      - "--certificatesresolvers.letsencryptresolver.acme.email=${EMAIL}"
       - "--log.level=DEBUG"
       - "--log.format=common"
       - "--log.filePath=/var/log/traefik/traefik.log"
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/traefik/access-log"
-
     volumes:
       - "vol_certificates:/etc/traefik/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
     networks:
-      - ${NETWORK} 
-
+      - ${NETWORK}
     ports:
       - target: 80
         published: 80
@@ -39,31 +35,31 @@ services:
       - target: 443
         published: 443
         mode: host
-
     deploy:
+      mode: replicated
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
       labels:
         - "traefik.enable=true"
+        # Dashboard
+        - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DOMAIN}`)"
+        - "traefik.http.routers.dashboard.entrypoints=websecure"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+        # Redirect middleware
         - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
         - "traefik.http.middlewares.redirect-https.redirectscheme.permanent=true"
-        - "traefik.http.routers.http-catchall.rule=Host(`{host:.+}`)"
-        - "traefik.http.routers.http-catchall.entrypoints=web"
-        - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
-        - "traefik.http.routers.http-catchall.priority=1"
-
 
 volumes:
-  vol_shared:
-    external: true
-    name: volume_swarm_shared
   vol_certificates:
     external: true
     name: volume_swarm_certificates
 
 networks:
-  ${NETWORK}: 
+  ${NETWORK}:
     external: true
     attachable: true
-    name: ${NETWORK} 
+    name: ${NETWORK}
