@@ -14,7 +14,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest 
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    command: -H tcp://tasks.agent:9001 --tlsskipverify --admin-password=${PORTAINER_PASSWORD_HASH}
     volumes:
       - portainer_data:/data
     networks:
