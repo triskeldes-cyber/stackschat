@@ -2,14 +2,14 @@ version: "3.8"
 services:
 
   postgres:
-    image: postgres:14 
+    image: pgvector/pgvector:pg16 
     command: >
       postgres
       -c max_connections=500
       -c shared_buffers=512MB
 
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgvector:/var/lib/postgresql/data
 
     networks:
       - ${NETWORK}
@@ -39,7 +39,7 @@ services:
 volumes:
   postgres_data:
     external: true
-    name: postgres_data
+    name: pgvector
 
 networks:
   ${NETWORK}: 
