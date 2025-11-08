@@ -37,7 +37,7 @@ services:
           memory: 1024M
 
 volumes:
-  postgres_data:
+  ppgvector:
     external: true
     name: pgvector
 
