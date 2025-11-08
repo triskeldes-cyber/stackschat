@@ -37,7 +37,7 @@ services:
           memory: 1024M
 
 volumes:
-  ppgvector:
+  pgvector:
     external: true
     name: pgvector
 
