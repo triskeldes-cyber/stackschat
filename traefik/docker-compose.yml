@@ -1,8 +1,9 @@
 version: "3.7"
 services:
   traefik:
-    image: traefik:v3.6.0
+    image: traefik/traefik: v3.6.0
     command:
+     - "--api.dashboard=true"
       - "--providers.swarm=true"
       - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
       - "--providers.swarm.exposedbydefault=false"
