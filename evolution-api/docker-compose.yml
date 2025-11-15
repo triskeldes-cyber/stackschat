@@ -12,7 +12,7 @@ services:
 
     environment:
       ## ⚙️ Configurações Gerais
-      - SERVER_URL=${EVOLUTION_API_SERVER_URL} ## 
+      - SERVER_URL=https://${EVOLUTION_API_SERVER_URL} ## 
       - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY} 
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - DEL_INSTANCE=false
