@@ -27,7 +27,7 @@ services:
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
       ## 💬 Url Chatwoot
-      - FRONTEND_URL=${URL_CHATWOOT}
+      - FRONTEND_URL=https://${URL_CHATWOOT}
       - FORCE_SSL=true
 
       ## 🌍 Idioma/Localização padrão
@@ -134,7 +134,7 @@ services:
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
       ## 💬 Url Chatwoot
-      - FRONTEND_URL=${URL_CHATWOOT}
+      - FRONTEND_URL=https://${URL_CHATWOOT}
       - FORCE_SSL=true
 
       ## 🌍 Idioma/Localização padrão
