@@ -45,7 +45,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
     networks:
-      - TriskelNET    # Red principal
+      - ${NETWORK}    # Red principal
       
     deploy:
       placement:
